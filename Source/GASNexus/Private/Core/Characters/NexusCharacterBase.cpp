@@ -6,6 +6,7 @@
 #include "AbilitySystemComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "GASNexus/Core/AbilitySystem/AttributeSetBasic.h"
 
 // Sets default values
 ANexusCharacterBase::ANexusCharacterBase()
@@ -16,6 +17,8 @@ ANexusCharacterBase::ANexusCharacterBase()
 	AbilitySystemComponent->SetIsReplicated(true);
 	AbilitySystemComponent->SetReplicationMode(ASCReplicationMode);
 
+	AttributeSet = CreateDefaultSubobject<UAttributeSetBasic>("AttributeSet");
+	
 	// 1.6 и установим стандартные настройки для персонажа
 	GetCapsuleComponent()->InitCapsuleSize(35.0f, 90.0f);
 	// Don't rotate when the controller rotates. Let that just affect the camera.

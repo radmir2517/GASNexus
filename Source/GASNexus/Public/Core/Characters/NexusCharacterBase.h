@@ -8,6 +8,8 @@
 #include "AbilitySystemInterface.h"
 #include "NexusCharacterBase.generated.h"
 
+class UAttributeSetBasic;
+
 UCLASS()
 class GASNEXUS_API ANexusCharacterBase : public ACharacter, public IAbilitySystemInterface
 {
@@ -29,6 +31,11 @@ protected:
 	// 1.1 Создадим компонент ASC
 	UPROPERTY(VisibleAnywhere,BlueprintReadOnly,Category="NexusCharacterBase")
 	UAbilitySystemComponent* AbilitySystemComponent;
+
+	// 2. Создадим компонент AttibuteSet
+	UPROPERTY(VisibleAnywhere,BlueprintReadOnly,Category="NexusCharacterBase")
+	UAttributeSetBasic* AttributeSet;
+	
 	// 1.2 Сделаем переменную которую мы сможем редактировать для назначения репликации для игрока и для врагов
 	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite,Category="NexusCharacterBase")
 	EGameplayEffectReplicationMode ASCReplicationMode = EGameplayEffectReplicationMode::Mixed;
