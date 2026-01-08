@@ -39,6 +39,12 @@ public:
 public:
 	//2.3 для репликация атрибута
 	virtual void GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const override;
+
+
+	//3.
+	virtual void PostGameplayEffectExecute(const struct FGameplayEffectModCallbackData& Data) override;
+
+	
 	//2.2 для репликация атрибута
 	UFUNCTION()
 	void OnRep_Health(const FGameplayAttributeData& OldValue) const;

@@ -3,6 +3,7 @@
 
 #include "AttributeSetBasic.h"
 
+#include "GameplayEffectExtension.h"
 #include "Net/UnrealNetwork.h"
 
 UAttributeSetBasic::UAttributeSetBasic()
@@ -23,6 +24,25 @@ void UAttributeSetBasic::GetLifetimeReplicatedProps(TArray<class FLifetimeProper
 	DOREPLIFETIME_CONDITION_NOTIFY(UAttributeSetBasic,MaxStamina,COND_None,REPNOTIFY_Always)
 	
 }
+
+void UAttributeSetBasic::PostGameplayEffectExecute(const struct FGameplayEffectModCallbackData& Data)
+{
+	Super::PostGameplayEffectExecute(Data);
+
+	float HealthValue = 0.f;
+	float StaminaValue = 0.f;
+	if (Data.EvaluatedData.Attribute == GetHealthAttribute())
+	{
+		HealthValue = Data.EvaluatedData.Attribute.GetNumericValue(this);
+		SetHealth(FMath::Clamp(HealthValue, 0.f, GetMaxHealth()));
+	}
+	else if (Data.EvaluatedData.Attribute == GetStaminaAttribute())
+	{ 
+		StaminaValue = Data.EvaluatedData.Attribute.GetNumericValue(this);
+		SetStamina(FMath::Clamp(StaminaValue, 0.f, GetMaxStamina()));
+	}
+}
+
 //2.3 для репликация атрибута
 void UAttributeSetBasic::OnRep_Health(const FGameplayAttributeData& OldValue) const
 {
