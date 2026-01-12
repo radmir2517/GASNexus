@@ -27,6 +27,9 @@ public:
 	// 1.4 Это для игрока, тут мы будем запускать InitAbilityActorInfo, для обозначения кто владелец, а кто аватар
 	virtual void OnRep_PlayerState() override;
 
+	// 4.7 Функция отправляющие ивент, пока только для UI
+	UFUNCTION(BlueprintCallable, Category = "NexusCharacterBase")
+	void SendGameplayEventToUpdate(FGameplayTag Tag);
 protected:
 	// 1.1 Создадим компонент ASC
 	UPROPERTY(VisibleAnywhere,BlueprintReadOnly,Category="NexusCharacterBase")
@@ -40,9 +43,22 @@ protected:
 	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite,Category="NexusCharacterBase")
 	EGameplayEffectReplicationMode ASCReplicationMode = EGameplayEffectReplicationMode::Mixed;
 
+	// 4.8 Создадим стартовые абилки
+	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite,Category="NexusCharacterBase")
+	TArray<TSubclassOf<UGameplayAbility>> StartedAbilities;
+
 protected:
 	virtual void BeginPlay() override;
 
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 
+	//4.1 Создадим функцию которая будет предоставлять абилки персонажу
+	UFUNCTION(BlueprintCallable, Category = "NexusCharacterBase")
+	TArray<FGameplayAbilitySpecHandle>GrantAbilities(TArray<TSubclassOf<UGameplayAbility>>ClassOfAbilities);
+
+	// 4.5 Создадим функцию, которая будет чистить абилки когда надо
+	UFUNCTION(BlueprintCallable, Category = "NexusCharacterBase")
+	void ClearAbilities(TArray<FGameplayAbilitySpecHandle>Abilities);
+
+	
 };

@@ -3,17 +3,19 @@
 
 #include "Core/Characters/NexusCharacterBase.h"
 
+#include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystemComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GASNexus/Core/AbilitySystem/AttributeSetBasic.h"
+#include "GASNexus/Core/AbilitySystem/NexusAbilitySystemComponent.h"
 
 // Sets default values
 ANexusCharacterBase::ANexusCharacterBase()
 {
 	PrimaryActorTick.bCanEverTick = true;
 	// 1.5 Сделаем компонентом и сделаем его реплицируемым и установим репликацию mixed Для игрока и minimal для врага
-	AbilitySystemComponent = CreateDefaultSubobject<UAbilitySystemComponent>("AbilitySystemComponent");
+	AbilitySystemComponent = CreateDefaultSubobject<UNexusAbilitySystemComponent>("AbilitySystemComponent");
 	AbilitySystemComponent->SetIsReplicated(true);
 	AbilitySystemComponent->SetReplicationMode(ASCReplicationMode);
 
@@ -82,3 +84,75 @@ UAbilitySystemComponent* ANexusCharacterBase::GetAbilitySystemComponent() const
 	}
 	return nullptr;
 }
+
+TArray<FGameplayAbilitySpecHandle> ANexusCharacterBase::GrantAbilities(TArray<TSubclassOf<UGameplayAbility>> ClassOfAbilities)
+{
+	if (!AbilitySystemComponent || !HasAuthority()) return TArray<FGameplayAbilitySpecHandle>();
+	// 4.2 Создадим массив, который будем возвращать
+	TArray<FGameplayAbilitySpecHandle>GrantedAbilities;
+	// 4.3 переберем все классы и сделаем give
+	for (auto ClassAbility : ClassOfAbilities)
+	{
+		GrantedAbilities.Add(AbilitySystemComponent->GiveAbility(AbilitySystemComponent->BuildAbilitySpecFromClass(ClassAbility)));
+	}
+
+	SendGameplayEventToUpdate(FGameplayTag::RequestGameplayTag(FName("UI.UpdateAbilityBar")));
+	// 4.4 вернем массив с абилками
+	return GrantedAbilities;
+}
+
+void ANexusCharacterBase::ClearAbilities(TArray<FGameplayAbilitySpecHandle> Abilities)
+{
+	if (!AbilitySystemComponent || !HasAuthority()) return;
+	// 4.6 очистим абилки
+	for (auto Ability : Abilities )
+	{
+		AbilitySystemComponent->ClearAbility(Ability);
+	}
+	SendGameplayEventToUpdate(FGameplayTag::RequestGameplayTag(FName("UI.UpdateAbilityBar")));
+}
+
+void ANexusCharacterBase::SendGameplayEventToUpdate(FGameplayTag Tag)
+{
+	FGameplayEventData Data;
+	Data.Instigator = this;
+	Data.Target = this;
+	Data.EventTag = Tag;
+	
+	UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(this,Tag,Data);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

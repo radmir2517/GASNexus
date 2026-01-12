@@ -29,7 +29,7 @@ void UAttributeSetBasic::PostGameplayEffectExecute(const struct FGameplayEffectM
 {
 	Super::PostGameplayEffectExecute(Data);
 
-	float HealthValue = 0.f;
+	float HealthValue = 0.f; 
 	float StaminaValue = 0.f;
 	if (Data.EvaluatedData.Attribute == GetHealthAttribute())
 	{
